@@ -45,6 +45,12 @@ function collide(arena, player) {
           const type = 2;
           eatEarth(arena, player, type);
           return false;
+        } else if (arena[y + o.y] && arena[y + o.y][x + o.x] === 3) {
+          // const type = 3;
+					// eatEarth(arena, player, type);
+					//console.log('3*', player.pos.y, player.pos.x);
+					
+          return pullRock();
         } else {
           //console.log('collide!');	
           return true;
@@ -86,6 +92,44 @@ function eatEarth(arena, player, type) {
     updateScore();
   }
   //console.log(arena[x][y]);
+}
+
+function pullRock() {
+	//console.log('pullRock(); ');
+
+	const y = player.pos.y;
+	const x = player.pos.x;
+	//console.log('3*', player.pos.y, player.pos.x);
+
+	// if (previousPos.x === x) {
+	// 	console.log('x');
+	// }
+
+	if (previousPos.y === y) {
+		//console.log('horizontal');
+		if ((arena[y][x + 1] === 5)) {
+			//console.log('from rigth');
+			if (arena[y][x - 1] === 0) {
+				//console.log(arena[y][x + 2]);
+				//console.log('can move');
+				arena[y][x - 1] = 3;
+				arena[y][x] = 0;
+				player.pos.y = y;
+				player.pos.x = x - 1;
+			}
+		} else {
+			//console.log('from left');
+			if (arena[y][x + 1] === 0) {
+				//console.log(arena[y][x + 2]);
+				console.log('can move');
+				arena[y][x + 1] = 3;
+				arena[y][x] = 0;
+				player.pos.y = y;
+				player.pos.x = x + 1;
+			}
+		}
+	}
+	return true;
 }
 
 function createMatrix(w, h) {
@@ -212,13 +256,10 @@ function merge2(arena, obstacle) {
   });
 }
 
-
-
-
 // work when element is freezes
 function merge(arena, player) {
   //console.log('merge',arena, player);
-  console.log('player.matrix: ', player.matrix);
+  //console.log('player.matrix: ', player.matrix);
   player.matrix.forEach((row, y) => {
     // console.log('1', row, y);
     row.forEach((value, x) => {
@@ -274,8 +315,17 @@ function drop() {
           //console.log('tade');
           // check if arena is end
           if (height > y + 1) {
+
+						// if (arena[y + 1][x] === 3) {
+						// 	//console.log('rock down!');
+						// 	if (arena[y + 1][x + 1] === 3) {
+						// 		console.log('rock down right!');
+						// 	}
+            // }
+
             // check if there any obstacle 
             if (arena[y + 1][x] === 0) {
+							console.log('drop');
               arena[y][x] = 0;
               arena[y + 1][x] = 3;
             }
@@ -370,7 +420,6 @@ function update(time = 0) {
 
   dropCounter += deltaTime;
   if (dropCounter > dropInterval) {
-
     drop();
   }
 
@@ -382,12 +431,9 @@ function update(time = 0) {
 
 function updateScore() {
   document.getElementById('score').innerText = player.score;
-
-  //console.log('update score');
 }
 
 function changeColor() {
-  //console.log('change color start');
   //console.log(player.matrix[0][0]);
 
   const matrix = player.matrix;
