@@ -4,102 +4,104 @@ const context = canvas.getContext('2d');
 context.scale(20, 20);
 
 function arenaSweep() {
-	//console.log('arenaSweep');
-	let rowCount = 1;
-	outer: for (let y = arena.length -1; y > 0; --y) {
-			for (let x = 0; x < arena[y].length; ++x) {
-					if (arena[y][x] === 0) {
-							continue outer;
-					}
-			}
+  //console.log('arenaSweep');
+  let rowCount = 1;
+  outer: for (let y = arena.length - 1; y > 0; --y) {
+    for (let x = 0; x < arena[y].length; ++x) {
+      if (arena[y][x] === 0) {
+        continue outer;
+      }
+    }
 
-			const row = arena.splice(y, 1)[0].fill(0);
-			arena.unshift(row);
-			++y;
+    const row = arena.splice(y, 1)[0].fill(0);
+    arena.unshift(row);
+    ++y;
 
-			player.score += rowCount * 10;
-			rowCount *= 2;
-	}
+    player.score += rowCount * 10;
+    rowCount *= 2;
+  }
 }
 
 // run on every change position
 function collide(arena, player) {
-	//console.log('collide:');
-	const m = player.matrix;
-	//console.log('collide:',m);
-	const o = player.pos;
-	//console.log('collide:',o);
+  //console.log('collide:');
+  const m = player.matrix;
+  //console.log('collide:',m);
+  const o = player.pos;
+  //console.log('collide:',o);
 
-	for (let y = 0; y < m.length; ++y) {
-		for (let x = 0; x < m[y].length; ++x) {
-			//console.log('m[y][x]: ',m[y][x]);
-			// what if make 1 transparent?
-			//console.log('sum: ',arena[y + o.y] && arena[y + o.y][x + o.x]);
-			if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+  for (let y = 0; y < m.length; ++y) {
+    for (let x = 0; x < m[y].length; ++x) {
+      //console.log('m[y][x]: ',m[y][x]);
+      // what if make 1 transparent?
+      //console.log('sum: ',arena[y + o.y] && arena[y + o.y][x + o.x]);
+      if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
 
-				if (arena[y + o.y] && arena[y + o.y][x + o.x] === 1) {
-					const type = 1;
-					eatEarth(arena, player, type );
-					return false;
-				}
-				else if (arena[y + o.y] && arena[y + o.y][x + o.x] === 2) {
-					const type = 2;
-					eatEarth(arena, player, type );
-					return false;
-				} else {
-					console.error('collide!');	
-					return true;
-				}
-			}
+        if (arena[y + o.y] && arena[y + o.y][x + o.x] === 1) {
+          const type = 1;
+          eatEarth(arena, player, type);
+          return false;
+        } else if (arena[y + o.y] && arena[y + o.y][x + o.x] === 2) {
+          const type = 2;
+          eatEarth(arena, player, type);
+          return false;
+        } else {
+          //console.log('collide!');	
+          return true;
+        }
+      }
 
-				// if (
-				// 	// basic logic
-				// 	(m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) 
-				// 	) {
-				// 		return true;
-				// }
-		}
-	}
-	return false;
+      // if (
+      // 	// basic logic
+      // 	(m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) 
+      // 	) {
+      // 		return true;
+      // }
+    }
+  }
+  return false;
 }
 
 function eatEarth(arena, player, type) {
-	//console.log('eat EARTH!');
-	console.log('ZRAT!:)',type );
+  //console.log('eat EARTH!');
+  //console.log('ZRAT!:)',type );
 
-	const x = player.pos.x;
-	const y = player.pos.y;
+  const x = player.pos.x;
+  const y = player.pos.y;
 
-	if (type === 1) {
-		// change to 0 
+  if (type === 1) {
+    // change to 0 
 		arena[y][x] = 0;
-	}
+		//console.log(player.pos.x, player.pos.y)
 
-	if (type === 2) {
-		// change to 0 
-		arena[y][x] = 0;
-		// 
-		console.log('YA SOJRAL YABLOKO!');
-		player.score = player.score + 1;
-		updateScore();
-	}
-	//console.log(arena[x][y]);
+		//arena[player.pos.y][player.pos.x] = 5;
+  }
+
+  if (type === 2) {
+    // change to 0 
+    arena[y][x] = 0;
+    // 
+    console.log('YA SOJRAL YABLOKO!');
+    player.score = player.score + 1;
+    updateScore();
+  }
+  //console.log(arena[x][y]);
 }
 
 function createMatrix(w, h) {
-	const matrix = [];
-	while (h--) {
-			matrix.push(new Array(w).fill(0));
-	}
-	return matrix;
+  const matrix = [];
+  while (h--) {
+    matrix.push(new Array(w).fill(0));
+  }
+  return matrix;
 }
 
 function createPiece(type) {
-	console.log('createPiece type: ', type);
+  //console.log('createPiece type: ', type);
 
-	return [
-			[5],
-	];
+  return [
+    [5],
+  ];
 }
 // function createPiece(type)
 // {
@@ -149,62 +151,65 @@ function createPiece(type) {
 // }
 
 function drawMatrix(matrix, offset) {
-	//console.log('drawMatrix');
-	matrix.forEach((row, y) => {
+  //console.log('drawMatrix');
+  matrix.forEach((row, y) => {
 
     //console.log(row);
 
-		row.forEach((value, x) => {
-			if (value !== 0) {
-				
-				context.fillStyle = colors[value];
-				//console.log(' colors[value]',value);
+    row.forEach((value, x) => {
+      if (value !== 0) {
 
-				context.fillRect(x + offset.x, y + offset.y, 1, 1);
-			}
-		});
-	});
+        context.fillStyle = colors[value];
+        //console.log(' colors[value]',value);
+
+        context.fillRect(x + offset.x, y + offset.y, 1, 1);
+      }
+    });
+  });
 }
 //
 function draw() {
-    context.fillStyle = '#000';
-    context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = '#000';
+  context.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawMatrix(arena, {x: 0, y: 0});
-    drawMatrix(player.matrix, player.pos);
+  drawMatrix(arena, {
+    x: 0,
+    y: 0
+  });
+  drawMatrix(player.matrix, player.pos);
 }
 
 // some create map
 const obstacle = [
-	[1,2,4,3,3,3,1,2,2,4],
-	[1,4,4,1,1,1,1,1,1,1],
-	[1,1,1,1,1,1,1,4,4,4],
-	[1,1,1,1,4,1,3,1,1,1],
-	[1,1,1,1,4,1,3,1,1,1],
-	[2,4,4,4,4,1,3,1,1,1],
-	[3,0,3,0,1,1,1,1,1,1],
-	[1,0,0,0,1,1,1,1,1,1],
-	[1,0,0,0,1,1,1,1,1,1],
-	[1,0,0,0,1,1,1,1,1,1]
+  [1, 2, 4, 3, 3, 3, 1, 2, 2, 4],
+  [1, 4, 4, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1, 1, 4, 4, 4],
+  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
+  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
+  [2, 4, 4, 4, 4, 1, 3, 1, 1, 1],
+  [3, 0, 3, 0, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 1, 1, 1, 1, 1, 1]
 ];
 
 //merge arena with obstacle
 function merge2(arena, obstacle) {
-	console.log('merge2');
-	//console.log('obstacle.matrix: ',obstacle);
+  //console.log('merge2');
+  //console.log('obstacle.matrix: ',obstacle);
 
-	obstacle.forEach((row, y) => {
-		//console.log('1', row, y);
-		row.forEach((value, x) => {
-			//console.log('2', value, x);
-			if (value !== 0) {
-				//console.log('+',y,x);
-				// y,x this is coordonates where to put obstacle
-				//arena[y + player.pos.y][x + player.pos.x] = value;
-				arena[y][x] = value;
-			}
-		});
-	});
+  obstacle.forEach((row, y) => {
+    //console.log('1', row, y);
+    row.forEach((value, x) => {
+      //console.log('2', value, x);
+      if (value !== 0) {
+        //console.log('+',y,x);
+        // y,x this is coordonates where to put obstacle
+        //arena[y + player.pos.y][x + player.pos.x] = value;
+        arena[y][x] = value;
+      }
+    });
+  });
 }
 
 
@@ -212,16 +217,16 @@ function merge2(arena, obstacle) {
 
 // work when element is freezes
 function merge(arena, player) {
-	//console.log('merge',arena, player);
-	console.log('player.matrix: ',player.matrix);
-	player.matrix.forEach((row, y) => {
-		// console.log('1', row, y);
-		row.forEach((value, x) => {
-			if (value !== 0) {
-				arena[y + player.pos.y][x + player.pos.x] = value;
-			}
-		});
-	});
+  //console.log('merge',arena, player);
+  console.log('player.matrix: ', player.matrix);
+  player.matrix.forEach((row, y) => {
+    // console.log('1', row, y);
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        arena[y + player.pos.y][x + player.pos.x] = value;
+      }
+    });
+  });
 }
 
 // function rotate(matrix, dir) {
@@ -245,66 +250,77 @@ function merge(arena, player) {
 // }
 
 function drop() {
-	//console.log('drop',arena);
+  //console.log('drop',arena);
+  const arr = [];
+  // create object for every 3*
+  arena.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (arena[y][x] === 3) {
+        //console.log(item);
+        const obj = {
+          x: x,
+          y: y
+        };
+        arr.push(obj);
+      }
+    })
+  })
+
+  // write new postiton of 3* to arena
+  arena.forEach((row, y) => {
+    row.forEach((value, x) => {
+      arr.forEach((item, index) => {
+        if ((item.y === y) && (item.x === x)) {
+          //console.log('tade');
+          // check if arena is end
+          if (height > y + 1) {
+            // check if there any obstacle 
+            if (arena[y + 1][x] === 0) {
+              arena[y][x] = 0;
+              arena[y + 1][x] = 3;
+            }
+          }
+        }
+      })
+    })
+  })
+  // if (collide(arena, player)) {
+  // 	console.log('collide playerDrop');
+  // 	player.pos.y--;
+  // 	merge(arena, player);
+  // 	playerReset();
+  // 	arenaSweep();
+  // 	updateScore();
+  // }
+  dropCounter = 0;
+}
 
 
-	const arr = [];
-	// create object for every 3*
-	arena.forEach((row, y) => {
-		row.forEach((value, x) => {
-			if (arena[y][x] === 3) {
-				//console.log(item);
-				const obj = {x: x, y: y};
-				arr.push(obj);	
-			}
-		})
-	})
-
-	// write new postiton of 3* to arena
-	arena.forEach((row, y) => {
-		row.forEach((value, x) => {
-			arr.forEach((item, index) => {
-				if ((item.y === y) && (item.x === x)) {
-					//console.log('tade');
-						// check if arena is end
-						if (height > y + 1) {
-							// check if there any obstacle 
-							if (arena[y + 1][x] === 0) {
-								arena[y][x] = 0;
-								arena[y + 1][x] = 3; 
-							}	
-						}
-				}
-			})
-		})
-	})
-	// if (collide(arena, player)) {
-	// 	console.log('collide playerDrop');
-	// 	player.pos.y--;
-	// 	merge(arena, player);
-	// 	playerReset();
-	// 	arenaSweep();
-	// 	updateScore();
-	// }
-	dropCounter = 0;
+let previousPos = {
+	x: null,
+	y: null
 }
 
 function playerMove(x, y) {
+  //console.log('move: ',x, y);
+  player.pos.x += x;
+  player.pos.y += y;
 
-
-	//console.log('move: ',x, y);
-	player.pos.x += x;
-	player.pos.y += y;
+  // logic to prevent going outside of arena
+  if (collide(arena, player)) {
+    player.pos.x -= x;
+    player.pos.y -= y;
+	}
 	
-	// logic to prevent going outside of arena
-	if (collide(arena, player)) {
-			player.pos.x -= x;
-			player.pos.y -= y;
+	if ((previousPos.x !== null)) {
+		arena[previousPos.y][previousPos.x] = 0;
 	}
 
+	arena[player.pos.y][player.pos.x] =	5;	 
+	previousPos.y = player.pos.y;
+	previousPos.x = player.pos.x;
 
-	
-
+	//console.log('previousPos: ',previousPos);
 }
 // function playerMove(offset) {
 //     player.pos.x += offset;
@@ -314,20 +330,19 @@ function playerMove(x, y) {
 // }
 
 function playerReset() {
-	//console.log('playerReset');
-	const pieces = 'TJLOSZI';
-	player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
-	// start postiton of player
-	player.pos.y = 9;
-	player.pos.x = 9;
-	//player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
-	if (collide(arena, player)) {
-			arena.forEach(row => row.fill(0));
-			player.score = 0;
-			updateScore();
-			
-	}
-	console.log('player.score',player.score);
+  //console.log('playerReset');
+  const pieces = 'TJLOSZI';
+  player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+  // start postiton of player
+  player.pos.y = 9;
+  player.pos.x = 9;
+  //player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+  if (collide(arena, player)) {
+    arena.forEach(row => row.fill(0));
+    player.score = 0;
+    updateScore();
+
+  }
 }
 
 // function playerRotate(dir) {
@@ -349,77 +364,78 @@ let dropCounter = 0;
 let dropInterval = 70;
 
 let lastTime = 0;
+
 function update(time = 0) {
-	const deltaTime = time - lastTime;
+  const deltaTime = time - lastTime;
 
-	dropCounter += deltaTime;
-	if (dropCounter > dropInterval) {
-		
-		drop();
-	}
+  dropCounter += deltaTime;
+  if (dropCounter > dropInterval) {
 
-	lastTime = time;
+    drop();
+  }
 
-	draw();
-	requestAnimationFrame(update);
+  lastTime = time;
+
+  draw();
+  requestAnimationFrame(update);
 }
 
 function updateScore() {
-		document.getElementById('score').innerText = player.score;
-		
-		console.log('update score');
+  document.getElementById('score').innerText = player.score;
+
+  //console.log('update score');
 }
 
 function changeColor() {
-	//console.log('change color start');
-	//console.log(player.matrix[0][0]);
+  //console.log('change color start');
+  //console.log(player.matrix[0][0]);
 
-	const matrix = player.matrix;
-	player.matrix[0][0] = player.matrix[0][0] + 1;
+  const matrix = player.matrix;
+  player.matrix[0][0] = player.matrix[0][0] + 1;
 
-	//reset
-	if (player.matrix[0][0] === 7) {
-		player.matrix[0][0] = 1;
-	}
+  //reset
+  if (player.matrix[0][0] === 7) {
+    player.matrix[0][0] = 1;
+  }
 
 }
 
 document.addEventListener('keydown', event => {
-	if (event.keyCode === 37) {
-		//left
-		playerMove(-1, 0);
-	} else if (event.keyCode === 39) {
-		// rigth
-		playerMove(1, 0);
-	} else if (event.keyCode === 40) {
-		// down
-		playerMove(0, 1);
-	} else if (event.keyCode === 38) {
-		// up
-		playerMove(0, -1);
-	} else if (event.keyCode === 32) {
-		//create fingerprint*	
-		merge(arena, player);
-		//arenaSweep();
-	} else if (event.keyCode === 67) {
-		//change color:
-		//console.log('change color');
-		changeColor();
-	} else if (event.keyCode === 73) {
-		//show arena	
-		console.log(arena);
-	}
+  if (event.keyCode === 37) {
+    //left
+    playerMove(-1, 0);
+  } else if (event.keyCode === 39) {
+    // rigth
+    playerMove(1, 0);
+  } else if (event.keyCode === 40) {
+    // down
+    playerMove(0, 1);
+  } else if (event.keyCode === 38) {
+    // up
+    playerMove(0, -1);
+  } else if (event.keyCode === 32) {
+    //create fingerprint*	
+    merge(arena, player);
+    //arenaSweep();
+  } else if (event.keyCode === 67) {
+    //change color:
+    //console.log('change color');
+    changeColor();
+  } else if (event.keyCode === 73) {
+    //show arena	
+    console.log(arena);
+  }
 });
 
 const colors = [
-	null,
-	'#380000',
-	'#FF0D72',
-	'#565656',
-	'#0DFF72',
-	'#FF8E0D',
-	'#FFE138',
-	'#3877FF',
+  null,
+  '#380000',
+  '#FF0D72',
+  '#565656',
+  '#0DFF72',
+  '#FF8E0D',
+  '#FFE138',
+  '#3877FF',
 ];
 
 
@@ -429,9 +445,12 @@ const width = 10;
 const arena = createMatrix(height, width);
 
 const player = {
-    pos: {x: 0, y: 0},
-    matrix: null,
-    score: 0,
+  pos: {
+    x: 0,
+    y: 0
+  },
+  matrix: null,
+  score: 0,
 };
 
 merge2(arena, obstacle);
