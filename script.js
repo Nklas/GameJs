@@ -224,19 +224,31 @@ function draw() {
 }
 
 // some create map
+// const obstacle = [
+//   [1, 2, 4, 3, 3, 3, 1, 2, 2, 4],
+//   [1, 4, 4, 1, 1, 1, 1, 1, 1, 1],
+//   [1, 1, 1, 1, 1, 1, 1, 4, 4, 4],
+//   [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
+//   [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
+//   [2, 4, 4, 4, 4, 1, 3, 1, 1, 1],
+//   [3, 0, 1, 0, 1, 1, 1, 1, 1, 1],
+//   [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+//   [1, 1, 1, 0, 0, 3, 0, 1, 1, 1],
+//   [1, 0, 0, 0, 0, 3, 0, 1, 1, 1]
+// ];
 const obstacle = [
-  [1, 2, 4, 3, 3, 3, 1, 2, 2, 4],
-  [1, 4, 4, 1, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 1, 1, 1, 1, 4, 4, 4],
-  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
-  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
-  [2, 4, 4, 4, 4, 1, 3, 1, 1, 1],
-  [3, 0, 3, 0, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0]
+ 
 ];
-
 //merge arena with obstacle
 function merge2(arena, obstacle) {
   //console.log('merge2');
@@ -291,7 +303,7 @@ function merge(arena, player) {
 // }
 
 function drop() {
-  //console.log('drop',arena);
+  //console.log('drop');
   const arr = [];
   // create object for every 3*
   arena.forEach((row, y) => {
@@ -312,20 +324,39 @@ function drop() {
     row.forEach((value, x) => {
       arr.forEach((item, index) => {
         if ((item.y === y) && (item.x === x)) {
-          //console.log('tade');
+
           // check if arena is end
           if (height > y + 1) {
 
-						// if (arena[y + 1][x] === 3) {
-						// 	//console.log('rock down!');
-						// 	if (arena[y + 1][x + 1] === 3) {
-						// 		console.log('rock down right!');
-						// 	}
-            // }
+            if (height > y + 2) {
+              if (arena[y + 1][x] === 0) {
+                if (arena[y + 2][x] === 3) {
+                  console.log('drop start');
+                }
+              }
+
+            }
+
+						if (arena[y + 1][x] === 3) {
+              //console.log('rock down!');
+							if (arena[y][x + 1] === 0) {
+                if ((arena[y + 1][x + 1] === 0)) {
+                  //console.log('rock empty right!', y,x);
+                  // arena[y + 1][x + 1] = 3;
+                  // arena[y][x] = 0;
+                }
+              } 
+
+              // if (arena[y][x - 1] === 0) {
+              //   if ((arena[y + 1][x - 1] === 0)) {
+              //     console.log('rock empty left', y,x);
+              //   }
+              // }
+            }
 
             // check if there any obstacle 
             if (arena[y + 1][x] === 0) {
-							console.log('drop');
+							//console.log('drop');
               arena[y][x] = 0;
               arena[y + 1][x] = 3;
             }
@@ -391,7 +422,6 @@ function playerReset() {
     arena.forEach(row => row.fill(0));
     player.score = 0;
     updateScore();
-
   }
 }
 
@@ -411,7 +441,7 @@ function playerReset() {
 // }
 
 let dropCounter = 0;
-let dropInterval = 70;
+let dropInterval = 500; //70
 
 let lastTime = 0;
 
@@ -461,6 +491,7 @@ document.addEventListener('keydown', event => {
     playerMove(0, -1);
   } else if (event.keyCode === 32) {
     //create fingerprint*	
+    console.log('f');
     merge(arena, player);
     //arenaSweep();
   } else if (event.keyCode === 67) {
