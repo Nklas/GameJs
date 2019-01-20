@@ -121,7 +121,7 @@ function pullRock() {
 			//console.log('from left');
 			if (arena[y][x + 1] === 0) {
 				//console.log(arena[y][x + 2]);
-				console.log('can move');
+				//console.log('can move');
 				arena[y][x + 1] = 3;
 				arena[y][x] = 0;
 				player.pos.y = y;
@@ -236,17 +236,30 @@ function draw() {
 //   [1, 1, 1, 0, 0, 3, 0, 1, 1, 1],
 //   [1, 0, 0, 0, 0, 3, 0, 1, 1, 1]
 // ];
+// const obstacle = [
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0]
+ 
+// ];
 const obstacle = [
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0]
+  [0, 0, 1, 1, 1, 1, 1, 1, 1, 0]
  
 ];
 //merge arena with obstacle
@@ -303,78 +316,187 @@ function merge(arena, player) {
 // }
 
 function drop() {
-  //console.log('drop');
   const arr = [];
-  // create object for every 3*
+  // create object for every 3* that is must fall
   arena.forEach((row, y) => {
     row.forEach((value, x) => {
-      if (arena[y][x] === 3) {
-        //console.log(item);
-        const obj = {
-          x: x,
-          y: y
-        };
-        arr.push(obj);
+      if (height > y + 1) {
+        if ((arena[y][x] === 3) && ( arena[y + 1][x] === 0)) {
+          const obj = {x: x, y: y};
+          arr.push(obj);
+        }
       }
+      
+
     })
   })
 
-  // write new postiton of 3* to arena
-  arena.forEach((row, y) => {
-    row.forEach((value, x) => {
-      arr.forEach((item, index) => {
-        if ((item.y === y) && (item.x === x)) {
+  // check if there any falling* rocks
+  if (arr.length > 0) {
+    //console.log(arr);
+    // write new postiton of 3* to arena
+    arena.forEach((row, y) => {
+      row.forEach((value, x) => {
+        arr.forEach((item, index) => {
+          if ((item.y === y) && (item.x === x)) {
 
-          // check if arena is end
-          if (height > y + 1) {
+            // check if arena is end
+            if (height > y + 1) {
 
-            if (height > y + 2) {
+              // console.log('drop start');'
+              let rebound = false;
               if (arena[y + 1][x] === 0) {
-                if (arena[y + 2][x] === 3) {
-                  console.log('drop start');
-                }
+                if ((height > y + 2) && (arena[y + 2][x] === 3)) {
+                  if ((arena[y + 2][x + 1] === 0) && (arena[y + 2][x - 1] === 0)) {
+                    rebound = true;
+                    let chance = Math.floor(Math.random() * 2);
+                    if (chance === 1) {
+                      arena[y][x] = 0;
+                      arena[y + 1][x + 1] = 3;
+                    } else {
+                      arena[y][x] = 0;
+                      arena[y + 1][x - 1] = 3;
+                    } 
+                  } else if (arena[y + 2][x - 1] === 0) {
+                    rebound = true;
+                    arena[y][x] = 0;
+                    arena[y + 1][x - 1] = 3;
+                    console.log('check left');
+
+                  } else if  (arena[y + 2][x + 1] === 0) {
+                    rebound = true;
+                    console.log('check right');
+                    arena[y][x] = 0;
+                    arena[y + 1][x + 1] = 3;
+                  } 
+                } 
               }
 
-            }
-
-						if (arena[y + 1][x] === 3) {
-              //console.log('rock down!');
-							if (arena[y][x + 1] === 0) {
-                if ((arena[y + 1][x + 1] === 0)) {
-                  //console.log('rock empty right!', y,x);
-                  // arena[y + 1][x + 1] = 3;
-                  // arena[y][x] = 0;
+              if (rebound !== true) {
+                arena[y][x] = 0;
+                arena[y + 1][x] = 3;
+              }
+            
+              if (height > y + 2) {
+                if (arena[y + 1][x] === 0) {
+                  if (arena[y + 2][x] === 3) {
+                    //console.log('drop start');
+                  }
                 }
-              } 
 
-              // if (arena[y][x - 1] === 0) {
-              //   if ((arena[y + 1][x - 1] === 0)) {
-              //     console.log('rock empty left', y,x);
-              //   }
+              }
+
+              if (arena[y + 1][x] === 3) {
+                //console.log('rock down!');
+                if (arena[y][x + 1] === 0) {
+                  if ((arena[y + 1][x + 1] === 0)) {
+                    //console.log('rock empty right!', y,x);
+                    // arena[y + 1][x + 1] = 3;
+                    // arena[y][x] = 0;
+                  }
+                } 
+
+                // if (arena[y][x - 1] === 0) {
+                //   if ((arena[y + 1][x - 1] === 0)) {
+                //     console.log('rock empty left', y,x);
+                //   }
+                // }
+              }
+
+              // check if there any obstacle 
+              // if (arena[y + 1][x] === 0) {
+              //   //console.log('drop');
+              //   arena[y][x] = 0;
+              //   arena[y + 1][x] = 3;
               // }
             }
-
-            // check if there any obstacle 
-            if (arena[y + 1][x] === 0) {
-							//console.log('drop');
-              arena[y][x] = 0;
-              arena[y + 1][x] = 3;
-            }
           }
-        }
+        })
       })
     })
-  })
-  // if (collide(arena, player)) {
-  // 	console.log('collide playerDrop');
-  // 	player.pos.y--;
-  // 	merge(arena, player);
-  // 	playerReset();
-  // 	arenaSweep();
-  // 	updateScore();
-  // }
+
+  }
+ 
+
+
+  
+ 
   dropCounter = 0;
 }
+
+// function drop() {
+//   //console.log('drop');
+//   const arr = [];
+//   // create object for every 3*
+//   arena.forEach((row, y) => {
+//     row.forEach((value, x) => {
+//       if (arena[y][x] === 3) {
+//         //console.log(item);
+//         const obj = {
+//           x: x,
+//           y: y
+//         };
+//         arr.push(obj);
+//       }
+//     })
+//   })
+
+//   // write new postiton of 3* to arena
+//   arena.forEach((row, y) => {
+//     row.forEach((value, x) => {
+//       arr.forEach((item, index) => {
+//         if ((item.y === y) && (item.x === x)) {
+
+//           // check if arena is end
+//           if (height > y + 1) {
+
+//             if (height > y + 2) {
+//               if (arena[y + 1][x] === 0) {
+//                 if (arena[y + 2][x] === 3) {
+//                   console.log('drop start');
+//                 }
+//               }
+
+//             }
+
+// 						if (arena[y + 1][x] === 3) {
+//               //console.log('rock down!');
+// 							if (arena[y][x + 1] === 0) {
+//                 if ((arena[y + 1][x + 1] === 0)) {
+//                   //console.log('rock empty right!', y,x);
+//                   // arena[y + 1][x + 1] = 3;
+//                   // arena[y][x] = 0;
+//                 }
+//               } 
+
+//               // if (arena[y][x - 1] === 0) {
+//               //   if ((arena[y + 1][x - 1] === 0)) {
+//               //     console.log('rock empty left', y,x);
+//               //   }
+//               // }
+//             }
+
+//             // check if there any obstacle 
+//             if (arena[y + 1][x] === 0) {
+// 							//console.log('drop');
+//               arena[y][x] = 0;
+//               arena[y + 1][x] = 3;
+//             }
+//           }
+//         }
+//       })
+//     })
+//   })
+//   // if (collide(arena, player)) {
+//   // 	console.log('collide playerDrop');
+//   // 	player.pos.y--;
+//   // 	merge(arena, player);
+//   // 	playerReset();
+//   // 	arenaSweep();
+//   // 	updateScore();
+//   // }
+//   dropCounter = 0;
+// }
 
 
 let previousPos = {
@@ -441,7 +563,7 @@ function playerReset() {
 // }
 
 let dropCounter = 0;
-let dropInterval = 500; //70
+let dropInterval = 2000; //70
 
 let lastTime = 0;
 
