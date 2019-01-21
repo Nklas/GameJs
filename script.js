@@ -253,12 +253,12 @@ const obstacle = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 3, 3, 0, 0, 0, 0],
   [0, 0, 1, 1, 1, 1, 1, 1, 1, 0]
  
 ];
@@ -317,6 +317,8 @@ function merge(arena, player) {
 
 function drop() {
   const arr = [];
+  const arrHit = [];
+
   // create object for every 3* that is must fall
   arena.forEach((row, y) => {
     row.forEach((value, x) => {
@@ -325,29 +327,41 @@ function drop() {
           const obj = {x: x, y: y};
           arr.push(obj);
         }
-      }
-      
 
+        if ((arena[y][x] === 4) && ( arena[y + 1][x] === 3)) {
+          const obj = {x: x, y: y};
+          arrHit.push(obj);
+        }
+      }
     })
   })
 
-  // check if there any falling* rocks
-  if (arr.length > 0) {
+  // hit 
+  if (arrHit.length > 0) {
     //console.log(arr);
     // write new postiton of 3* to arena
     arena.forEach((row, y) => {
       row.forEach((value, x) => {
-        arr.forEach((item, index) => {
+        arrHit.forEach((item, index) => {
           if ((item.y === y) && (item.x === x)) {
-
             // check if arena is end
             if (height > y + 1) {
+              console.log('bamts start', item);
 
-              // console.log('drop start');'
+              // arena[y][x] = 0;
+              // arena[y + 1][x] = 3;
+              // if (arena[y + 2][x] === 3) {
+              //   console.log('bamts');  
+              //   // on the next turn fall aside
+              //   arena[y + 1][x] = 4; // *4 rock on hit with ground
+              // }
+
+
               let rebound = false;
-              if (arena[y + 1][x] === 0) {
-                if ((height > y + 2) && (arena[y + 2][x] === 3)) {
-                  if ((arena[y + 2][x + 1] === 0) && (arena[y + 2][x - 1] === 0)) {
+              if (true) {
+                if ((height > y + 1) && (arena[y + 1][x] === 3)) {
+                  
+                  if ((arena[y][x + 1] === 0) && (arena[y][x - 1] === 0)) {
                     rebound = true;
                     let chance = Math.floor(Math.random() * 2);
                     if (chance === 1) {
@@ -357,25 +371,83 @@ function drop() {
                       arena[y][x] = 0;
                       arena[y + 1][x - 1] = 3;
                     } 
-                  } else if (arena[y + 2][x - 1] === 0) {
-                    rebound = true;
-                    arena[y][x] = 0;
-                    arena[y + 1][x - 1] = 3;
-                    console.log('check left');
-
-                  } else if  (arena[y + 2][x + 1] === 0) {
-                    rebound = true;
-                    console.log('check right');
-                    arena[y][x] = 0;
-                    arena[y + 1][x + 1] = 3;
                   } 
+                  // else if (arena[y + 2][x - 1] === 0) {
+                  //   rebound = true;
+                  //   arena[y][x] = 0;
+                  //   arena[y + 1][x - 1] = 3;
+                  //   console.log('check left');
+
+                  // } else if  (arena[y + 2][x + 1] === 0) {
+                  //   rebound = true;
+                  //   console.log('check right');
+                  //   arena[y][x] = 0;
+                  //   arena[y + 1][x + 1] = 3;
+                  // } 
                 } 
               }
 
-              if (rebound !== true) {
-                arena[y][x] = 0;
-                arena[y + 1][x] = 3;
+            }
+          }
+        })
+      })
+    })
+
+  }
+
+
+  // check if there any falling* rocks
+  if (arr.length > 0) {
+    //console.log(arr);
+    // write new postiton of 3* to arena
+    arena.forEach((row, y) => {
+      row.forEach((value, x) => {
+        arr.forEach((item, index) => {
+          if ((item.y === y) && (item.x === x)) {
+            // check if arena is end
+            if (height > y + 1) {
+              console.log('drop start', item);
+              arena[y][x] = 0;
+              arena[y + 1][x] = 3;
+              if (arena[y + 2][x] === 3) {
+                console.log('bamts');  
+                // on the next turn fall aside
+                arena[y + 1][x] = 4; // *4 rock on hit with ground
               }
+
+
+              // let rebound = false;
+              // if (arena[y + 1][x] === 0) {
+              //   if ((height > y + 2) && (arena[y + 2][x] === 3)) {
+              //     if ((arena[y + 2][x + 1] === 0) && (arena[y + 2][x - 1] === 0)) {
+              //       rebound = true;
+              //       let chance = Math.floor(Math.random() * 2);
+              //       if (chance === 1) {
+              //         arena[y][x] = 0;
+              //         arena[y + 1][x + 1] = 3;
+              //       } else {
+              //         arena[y][x] = 0;
+              //         arena[y + 1][x - 1] = 3;
+              //       } 
+              //     } else if (arena[y + 2][x - 1] === 0) {
+              //       rebound = true;
+              //       arena[y][x] = 0;
+              //       arena[y + 1][x - 1] = 3;
+              //       console.log('check left');
+
+              //     } else if  (arena[y + 2][x + 1] === 0) {
+              //       rebound = true;
+              //       console.log('check right');
+              //       arena[y][x] = 0;
+              //       arena[y + 1][x + 1] = 3;
+              //     } 
+              //   } 
+              // }
+
+              // if (rebound !== true) {
+              //   arena[y][x] = 0;
+              //   arena[y + 1][x] = 3;
+              // }
             
               if (height > y + 2) {
                 if (arena[y + 1][x] === 0) {
@@ -563,7 +635,7 @@ function playerReset() {
 // }
 
 let dropCounter = 0;
-let dropInterval = 2000; //70
+let dropInterval = 500; //70
 
 let lastTime = 0;
 
