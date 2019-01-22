@@ -224,18 +224,18 @@ function draw() {
 }
 
 // some create map
-// const obstacle = [
-//   [1, 2, 4, 3, 3, 3, 1, 2, 2, 4],
-//   [1, 4, 4, 1, 1, 1, 1, 1, 1, 1],
-//   [1, 1, 1, 1, 1, 1, 1, 4, 4, 4],
-//   [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
-//   [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
-//   [2, 4, 4, 4, 4, 1, 3, 1, 1, 1],
-//   [3, 0, 1, 0, 1, 1, 1, 1, 1, 1],
-//   [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-//   [1, 1, 1, 0, 0, 3, 0, 1, 1, 1],
-//   [1, 0, 0, 0, 0, 3, 0, 1, 1, 1]
-// ];
+const obstacle = [
+  [1, 2, 4, 3, 3, 3, 1, 2, 2, 4],
+  [1, 4, 4, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1, 1, 4, 4, 4],
+  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
+  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
+  [2, 4, 4, 4, 4, 1, 3, 1, 1, 1],
+  [3, 0, 1, 0, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 0, 0, 3, 0, 1, 1, 1],
+  [1, 0, 0, 0, 0, 3, 0, 1, 1, 1]
+];
 // const obstacle = [
 //   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
 //   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
@@ -249,19 +249,19 @@ function draw() {
 //   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0]
  
 // ];
-const obstacle = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 3, 3, 0, 0, 0, 0],
-  [0, 0, 1, 1, 1, 1, 1, 1, 1, 0]
+// const obstacle = [
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0]
  
-];
+// ];
 //merge arena with obstacle
 function merge2(arena, obstacle) {
   //console.log('merge2');
@@ -323,253 +323,128 @@ function drop() {
   arena.forEach((row, y) => {
     row.forEach((value, x) => {
       if (height > y + 1) {
+        //get all rocks without ground
         if ((arena[y][x] === 3) && ( arena[y + 1][x] === 0)) {
           const obj = {x: x, y: y};
           arr.push(obj);
         }
-
-        if ((arena[y][x] === 4) && ( arena[y + 1][x] === 3)) {
-          const obj = {x: x, y: y};
-          arrHit.push(obj);
-        }
+        
+        //get all rocks that no londer move
+        // if ((arena[y][x] === 4) && ((arena[y + 1][x] === 0))) {
+        //   const obj = {x: x, y: y};
+        //   arrHit.push(obj);
+        // }
       }
+
+      //get all rocks in move
+      if (arena[y][x] === 4) {
+        const obj = {x: x, y: y};
+        arrHit.push(obj);
+      }
+      
     })
   })
 
-  // hit 
-  if (arrHit.length > 0) {
-    //console.log(arr);
-    // write new postiton of 3* to arena
-    arena.forEach((row, y) => {
-      row.forEach((value, x) => {
-        arrHit.forEach((item, index) => {
-          if ((item.y === y) && (item.x === x)) {
-            // check if arena is end
-            if (height > y + 1) {
-              console.log('bamts start', item);
-
-              // arena[y][x] = 0;
-              // arena[y + 1][x] = 3;
-              // if (arena[y + 2][x] === 3) {
-              //   console.log('bamts');  
-              //   // on the next turn fall aside
-              //   arena[y + 1][x] = 4; // *4 rock on hit with ground
-              // }
-
-
-              let rebound = false;
-              if (true) {
-                if ((height > y + 1) && (arena[y + 1][x] === 3)) {
-                  
-                  if ((arena[y][x + 1] === 0) && (arena[y][x - 1] === 0)) {
-                    rebound = true;
-                    let chance = Math.floor(Math.random() * 2);
-                    if (chance === 1) {
-                      arena[y][x] = 0;
-                      arena[y + 1][x + 1] = 3;
-                    } else {
-                      arena[y][x] = 0;
-                      arena[y + 1][x - 1] = 3;
-                    } 
-                  } 
-                  // else if (arena[y + 2][x - 1] === 0) {
-                  //   rebound = true;
-                  //   arena[y][x] = 0;
-                  //   arena[y + 1][x - 1] = 3;
-                  //   console.log('check left');
-
-                  // } else if  (arena[y + 2][x + 1] === 0) {
-                  //   rebound = true;
-                  //   console.log('check right');
-                  //   arena[y][x] = 0;
-                  //   arena[y + 1][x + 1] = 3;
-                  // } 
-                } 
-              }
-
-            }
-          }
-        })
-      })
-    })
-
-  }
-
-
+  //console.log('arr: ', arr.length);
+  //console.log('arrHit: ', arrHit.length);
   // check if there any falling* rocks
+  //console.log('arr: ', arr.length);
   if (arr.length > 0) {
-    //console.log(arr);
-    // write new postiton of 3* to arena
     arena.forEach((row, y) => {
       row.forEach((value, x) => {
         arr.forEach((item, index) => {
           if ((item.y === y) && (item.x === x)) {
-            // check if arena is end
-            if (height > y + 1) {
-              console.log('drop start', item);
+            //checking start  
+            if (arena[y + 1][x] === 0) {
+              // drop
               arena[y][x] = 0;
-              arena[y + 1][x] = 3;
-              if (arena[y + 2][x] === 3) {
-                console.log('bamts');  
-                // on the next turn fall aside
-                arena[y + 1][x] = 4; // *4 rock on hit with ground
-              }
-
-
-              // let rebound = false;
-              // if (arena[y + 1][x] === 0) {
-              //   if ((height > y + 2) && (arena[y + 2][x] === 3)) {
-              //     if ((arena[y + 2][x + 1] === 0) && (arena[y + 2][x - 1] === 0)) {
-              //       rebound = true;
-              //       let chance = Math.floor(Math.random() * 2);
-              //       if (chance === 1) {
-              //         arena[y][x] = 0;
-              //         arena[y + 1][x + 1] = 3;
-              //       } else {
-              //         arena[y][x] = 0;
-              //         arena[y + 1][x - 1] = 3;
-              //       } 
-              //     } else if (arena[y + 2][x - 1] === 0) {
-              //       rebound = true;
-              //       arena[y][x] = 0;
-              //       arena[y + 1][x - 1] = 3;
-              //       console.log('check left');
-
-              //     } else if  (arena[y + 2][x + 1] === 0) {
-              //       rebound = true;
-              //       console.log('check right');
-              //       arena[y][x] = 0;
-              //       arena[y + 1][x + 1] = 3;
-              //     } 
-              //   } 
-              // }
-
-              // if (rebound !== true) {
-              //   arena[y][x] = 0;
-              //   arena[y + 1][x] = 3;
-              // }
-            
-              if (height > y + 2) {
-                if (arena[y + 1][x] === 0) {
-                  if (arena[y + 2][x] === 3) {
-                    //console.log('drop start');
-                  }
-                }
-
-              }
-
-              if (arena[y + 1][x] === 3) {
-                //console.log('rock down!');
-                if (arena[y][x + 1] === 0) {
-                  if ((arena[y + 1][x + 1] === 0)) {
-                    //console.log('rock empty right!', y,x);
-                    // arena[y + 1][x + 1] = 3;
-                    // arena[y][x] = 0;
-                  }
-                } 
-
-                // if (arena[y][x - 1] === 0) {
-                //   if ((arena[y + 1][x - 1] === 0)) {
-                //     console.log('rock empty left', y,x);
-                //   }
-                // }
-              }
-
-              // check if there any obstacle 
-              // if (arena[y + 1][x] === 0) {
-              //   //console.log('drop');
-              //   arena[y][x] = 0;
-              //   arena[y + 1][x] = 3;
-              // }
+              arena[y + 1][x] = 4;
             }
+
+            // if (arena[y + 1][x] === 3) {
+            //   arena[y][x] = 4;
+            // }
           }
         })
       })
     })
-
   }
- 
 
+  //console.log('arrHit: ', arrHit.length);
+  if (arrHit.length > 0) {
+    arena.forEach((row, y) => {
+      row.forEach((value, x) => {
+        arrHit.forEach((item, index) => {
+          if ((item.y === y) && (item.x === x)) {
+            //checking if it ground
+            
+            //console.log('arena[y][x]: ',y);
 
-  
- 
+            // if there place to fall down
+            if ((height > y + 1) && (arena[y + 1][x] === 0)) {
+              // drop
+              arena[y][x] = 0;
+              arena[y + 1][x] = 4;
+            } 
+            // if hit something
+            else if ((height > y + 1) && (arena[y + 1][x] !== 0)) {
+              //console.log('hit');
+              // if hit no rock
+              if (arena[y + 1][x] !== 3) {
+                //console.log('hit noRock');
+                arena[y][x] = 3;
+              }  
+              // check if there no space around:
+              if (
+                // check logic :)
+                ((arena[y + 1][x - 1] !== 0) && (arena[y + 1][x + 1] !== 0)) 
+                || ((arena[y][x - 1] !== 0) && (arena[y][x + 1] !== 0)) 
+                || ((arena[y][x - 1] !== 0) && (arena[y + 1][x + 1] !== 0)) 
+                || ((arena[y + 1][x - 1] !== 0) && (arena[y][x + 1] !== 0)) 
+              ) {
+                //console.log('END of fall'); 
+                arena[y][x] = 3;
+              }
+              // if it rock or not?
+              if ((arena[y + 1][x] === 3))  {
+                //console.log('hit rock');
+
+                // check space around:
+                if ((arena[y][x - 1] === 0) && (arena[y + 1][x - 1] === 0) && (arena[y][x + 1] === 0) && (arena[y + 1][x + 1] === 0)) {
+                  //console.log('both'); 
+                  let chance = Math.floor(Math.random() * 2);
+                  if (chance === 1) {
+                    arena[y][x] = 0;
+                    arena[y + 1][x + 1] = 4;
+                  } else {
+                    arena[y][x] = 0;
+                    arena[y + 1][x - 1] = 4;
+                  } 
+                } else if ((arena[y][x - 1] === 0) && (arena[y + 1][x - 1] === 0)) {
+                  //console.log('left'); 
+                  arena[y][x] = 0;
+                  arena[y + 1][x - 1] = 4;
+                } else if ((arena[y][x + 1] === 0) && (arena[y + 1][x + 1] === 0)) {
+                  //console.log('right'); 
+                  arena[y][x] = 0;
+                  arena[y + 1][x + 1] = 4;
+                }
+              }   
+            }  
+            // if on the ground
+            if (height === y + 1) {
+              //console.log(y);
+              arena[y][x] = 3;
+            }
+
+          }
+        })
+      })
+    })
+  }
+
   dropCounter = 0;
 }
-
-// function drop() {
-//   //console.log('drop');
-//   const arr = [];
-//   // create object for every 3*
-//   arena.forEach((row, y) => {
-//     row.forEach((value, x) => {
-//       if (arena[y][x] === 3) {
-//         //console.log(item);
-//         const obj = {
-//           x: x,
-//           y: y
-//         };
-//         arr.push(obj);
-//       }
-//     })
-//   })
-
-//   // write new postiton of 3* to arena
-//   arena.forEach((row, y) => {
-//     row.forEach((value, x) => {
-//       arr.forEach((item, index) => {
-//         if ((item.y === y) && (item.x === x)) {
-
-//           // check if arena is end
-//           if (height > y + 1) {
-
-//             if (height > y + 2) {
-//               if (arena[y + 1][x] === 0) {
-//                 if (arena[y + 2][x] === 3) {
-//                   console.log('drop start');
-//                 }
-//               }
-
-//             }
-
-// 						if (arena[y + 1][x] === 3) {
-//               //console.log('rock down!');
-// 							if (arena[y][x + 1] === 0) {
-//                 if ((arena[y + 1][x + 1] === 0)) {
-//                   //console.log('rock empty right!', y,x);
-//                   // arena[y + 1][x + 1] = 3;
-//                   // arena[y][x] = 0;
-//                 }
-//               } 
-
-//               // if (arena[y][x - 1] === 0) {
-//               //   if ((arena[y + 1][x - 1] === 0)) {
-//               //     console.log('rock empty left', y,x);
-//               //   }
-//               // }
-//             }
-
-//             // check if there any obstacle 
-//             if (arena[y + 1][x] === 0) {
-// 							//console.log('drop');
-//               arena[y][x] = 0;
-//               arena[y + 1][x] = 3;
-//             }
-//           }
-//         }
-//       })
-//     })
-//   })
-//   // if (collide(arena, player)) {
-//   // 	console.log('collide playerDrop');
-//   // 	player.pos.y--;
-//   // 	merge(arena, player);
-//   // 	playerReset();
-//   // 	arenaSweep();
-//   // 	updateScore();
-//   // }
-//   dropCounter = 0;
-// }
-
 
 let previousPos = {
 	x: null,
@@ -635,7 +510,7 @@ function playerReset() {
 // }
 
 let dropCounter = 0;
-let dropInterval = 500; //70
+let dropInterval = 20; //70
 
 let lastTime = 0;
 
@@ -703,7 +578,7 @@ const colors = [
   '#380000',
   '#FF0D72',
   '#565656',
-  '#0DFF72',
+  '#3877FF',
   '#FF8E0D',
   '#FFE138',
   '#3877FF',
