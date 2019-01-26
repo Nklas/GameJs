@@ -47,7 +47,16 @@ function collide(arena, player) {
           eatEarth(arena, player, type);
           return false;
         } else if (arena[y + o.y] && arena[y + o.y][x + o.x] === 3) {
+<<<<<<< HEAD
           console.log('3');	
+=======
+          // const type = 3;
+					// eatEarth(arena, player, type);
+					//console.log('3*', player.pos.y, player.pos.x);
+					// if (arena[y + 1][x] = 3) {
+          //   arena[y + 1][x] === 5;
+          // }
+>>>>>>> 6cc4fc2054ee9782f234f3c7a5eb4eff9b048d0a
           return pullRock();
         } else if ((arena[y + 1][x] === 4))  {
           console.log('4');	
@@ -441,11 +450,18 @@ function drop() {
                   
                 // }
               }
+<<<<<<< HEAD
 
               // if ((arena[y + 1][x] === 5))  {
               //   arena[y][x] = 0;
               //   arena[y][x] = 6;
               // }  
+=======
+              if ((arena[y + 1][x] === 5))  {
+                arena[y][x] = 0;
+                arena[y][x] = 6;
+              }  
+>>>>>>> 6cc4fc2054ee9782f234f3c7a5eb4eff9b048d0a
             }  
             // if on the ground
             if (height === y + 1) {
@@ -479,6 +495,7 @@ function playerMove(x, y) {
   if (collide(arena, player)) {
     player.pos.x -= x;
     player.pos.y -= y;
+<<<<<<< HEAD
   } 
   
   // console.log('move: ',arena[player.pos.y][player.pos.x]);
@@ -488,6 +505,16 @@ function playerMove(x, y) {
   // }
 
 
+=======
+	} //else if (collide(arena, player) === 3) {
+  //   player.pos.x = arena[x];
+  //   player.pos.y = arena[y + 1];
+  // }  //else if (player.pos.x = arena[x] && player.pos.y == arena[y + 1]) {
+  //   player.pos.x = arena[x];
+  //   player.pos.y = arena[y];
+  // }
+	
+>>>>>>> 6cc4fc2054ee9782f234f3c7a5eb4eff9b048d0a
 	if ((previousPos.x !== null)) {
 		arena[previousPos.y][previousPos.x] = 0;
 	}
