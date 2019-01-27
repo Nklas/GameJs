@@ -73,31 +73,25 @@ function playerReset() {
   // }
 }
 
+// function collide: 
+// if returns true you can make your move
 function collide(arena, player, x, y) {
+  const playerDesiredPosY = player.pos.y + y;
+  const playerDesiredPosX = player.pos.x + x;
 
-	const pos = player.pos;
-	console.log(pos);
-
-	if (arena[player.pos.y + y][player.pos.x + x] === 3) {
+  // check limits of arena
+  if ((playerDesiredPosY < 0 || playerDesiredPosY > height - 1) || (playerDesiredPosX < 0 || playerDesiredPosX > width - 1)) {
+    console.log('limits of arena');
 		return false;
-	} else {
-		return true;
-	}
-
-	// arena.forEach((row, y) => {
-  //   row.forEach((value, x) => {
-
-	// 		//arena[y][x] = value;
-
-  //   });
-	// });
-	// return true;
+	} else if (arena[playerDesiredPosY][playerDesiredPosX] === 3) {
+    console.log('rock collide');
+    return false;
+  } else {
+    return true;
+  }
 }
 
 function playerMove(x, y) {
-  //console.log('playerMove: ',collide(arena, player));
- 
-  // logic to prevent going outside of arena
   if (collide(arena, player, x, y)) {
 		player.pos.x += x;
 		player.pos.y += y;
