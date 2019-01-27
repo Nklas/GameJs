@@ -19,7 +19,7 @@ function draw() {
     x: 0,
     y: 0
   });
-  //drawMatrix(player.matrix, player.pos);
+  drawMatrix(player.matrix, player.pos);
 }
 
 function drawMatrix(matrix, offset) {
@@ -61,6 +61,81 @@ function update(time = 0) {
   requestAnimationFrame(update);
 }
 
+function playerReset() {
+  // start postiton of player
+  player.pos.y = 9;
+  player.pos.x = 9;
+  
+  // if (collide(arena, player)) {
+  //   arena.forEach(row => row.fill(0));
+  //   player.score = 0;
+  //   updateScore();
+  // }
+}
+
+function collide(arena, player, x, y) {
+
+	const pos = player.pos;
+	console.log(pos);
+
+	if (arena[player.pos.y + y][player.pos.x + x] === 3) {
+		return false;
+	} else {
+		return true;
+	}
+
+	// arena.forEach((row, y) => {
+  //   row.forEach((value, x) => {
+
+	// 		//arena[y][x] = value;
+
+  //   });
+	// });
+	// return true;
+}
+
+function playerMove(x, y) {
+  //console.log('playerMove: ',collide(arena, player));
+ 
+  // logic to prevent going outside of arena
+  if (collide(arena, player, x, y)) {
+		player.pos.x += x;
+		player.pos.y += y;
+  } 
+  
+	// if ((previousPos.x !== null)) {
+	// 	arena[previousPos.y][previousPos.x] = 0;
+	// }
+	// arena[player.pos.y][player.pos.x] =	5;	 
+	// previousPos.y = player.pos.y;
+	// previousPos.x = player.pos.x;
+}
+
+document.addEventListener('keydown', event => {
+  if (event.keyCode === 37) {
+    //left
+    playerMove(-1, 0);
+  } else if (event.keyCode === 39) {
+    // rigth
+    playerMove(1, 0);
+  } else if (event.keyCode === 40) {
+    // down
+    playerMove(0, 1);
+  } else if (event.keyCode === 38) {
+    // up
+    playerMove(0, -1);
+  }
+});
+
+const player = {
+  pos: {
+    x: 0,
+    y: 0
+  },
+  matrix: [[5]],
+  //score: 0,
+};
+
 // params
 const map = [
   [1, 2, 4, 3, 3, 3, 1, 2, 2, 4],
@@ -91,4 +166,5 @@ const width = 10;
 
 const arena = createMatrix(height, width);
 mergeWithMap(arena, map);
+playerReset();
 update();
