@@ -1,136 +1,7 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 
-context.scale(20, 20);
-
-function arenaSweep() {
-  //console.log('arenaSweep');
-  let rowCount = 1;
-  outer: for (let y = arena.length - 1; y > 0; --y) {
-    for (let x = 0; x < arena[y].length; ++x) {
-      if (arena[y][x] === 0) {
-        continue outer;
-      }
-    }
-
-    const row = arena.splice(y, 1)[0].fill(0);
-    arena.unshift(row);
-    ++y;
-
-    player.score += rowCount * 10;
-    rowCount *= 2;
-  }
-}
-
-// run on every change position
-function collide(arena, player) {
-  //console.log('collide:');
-  const m = player.matrix;
-  //console.log('collide:',m);
-  const o = player.pos;
-  //console.log('collide:',o);
-
-  for (let y = 0; y < m.length; ++y) {
-    for (let x = 0; x < m[y].length; ++x) {
-      //console.log('m[y][x]: ',m[y][x]);
-      // what if make 1 transparent?
-      //console.log('sum: ',arena[y + o.y] && arena[y + o.y][x + o.x]);
-      if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
-
-        if (arena[y + o.y] && arena[y + o.y][x + o.x] === 1) {
-          const type = 1;
-          eatEarth(arena, player, type);
-          return false;
-        } else if (arena[y + o.y] && arena[y + o.y][x + o.x] === 2) {
-          const type = 2;
-          eatEarth(arena, player, type);
-          return false;
-        } else if (arena[y + o.y] && arena[y + o.y][x + o.x] === 3) {
-          // const type = 3;
-					// eatEarth(arena, player, type);
-					//console.log('3*', player.pos.y, player.pos.x);
-					
-          return pullRock();
-        } else {
-          //console.log('collide!');	
-          return true;
-        }
-      }
-
-      // if (
-      // 	// basic logic
-      // 	(m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) 
-      // 	) {
-      // 		return true;
-      // }
-    }
-  }
-  return false;
-}
-
-function eatEarth(arena, player, type) {
-  //console.log('eat EARTH!');
-  //console.log('ZRAT!:)',type );
-
-  const x = player.pos.x;
-  const y = player.pos.y;
-
-  if (type === 1) {
-    // change to 0 
-		arena[y][x] = 0;
-		//console.log(player.pos.x, player.pos.y)
-
-		//arena[player.pos.y][player.pos.x] = 5;
-  }
-
-  if (type === 2) {
-    // change to 0 
-    arena[y][x] = 0;
-    // 
-    console.log('YA SOJRAL YABLOKO!');
-    player.score = player.score + 1;
-    updateScore();
-  }
-  //console.log(arena[x][y]);
-}
-
-function pullRock() {
-	//console.log('pullRock(); ');
-
-	const y = player.pos.y;
-	const x = player.pos.x;
-	//console.log('3*', player.pos.y, player.pos.x);
-
-	// if (previousPos.x === x) {
-	// 	console.log('x');
-	// }
-
-	if (previousPos.y === y) {
-		//console.log('horizontal');
-		if ((arena[y][x + 1] === 5)) {
-			//console.log('from rigth');
-			if (arena[y][x - 1] === 0) {
-				//console.log(arena[y][x + 2]);
-				//console.log('can move');
-				arena[y][x - 1] = 3;
-				arena[y][x] = 0;
-				player.pos.y = y;
-				player.pos.x = x - 1;
-			}
-		} else {
-			//console.log('from left');
-			if (arena[y][x + 1] === 0) {
-				//console.log(arena[y][x + 2]);
-				//console.log('can move');
-				arena[y][x + 1] = 3;
-				arena[y][x] = 0;
-				player.pos.y = y;
-				player.pos.x = x + 1;
-			}
-		}
-	}
-	return true;
-}
+context.scale(40, 40);
 
 function createMatrix(w, h) {
   const matrix = [];
@@ -140,78 +11,6 @@ function createMatrix(w, h) {
   return matrix;
 }
 
-function createPiece(type) {
-  //console.log('createPiece type: ', type);
-
-  return [
-    [5],
-  ];
-}
-// function createPiece(type)
-// {
-//     if (type === 'I') {
-//         return [
-//             [0, 1, 0, 0],
-//             [0, 1, 0, 0],
-//             [0, 1, 0, 0],
-//             [0, 1, 0, 0],
-//         ];
-//     } else if (type === 'L') {
-//         return [
-//             [0, 2, 0],
-//             [0, 2, 0],
-//             [0, 2, 2],
-//         ];
-//     } else if (type === 'J') {
-//         return [
-//             [0, 3, 0],
-//             [0, 3, 0],
-//             [3, 3, 0],
-//         ];
-//     } else if (type === 'O') {
-//         return [
-//             [4, 4],
-//             [4, 4],
-//         ];
-//     } else if (type === 'Z') {
-//         return [
-//             [5, 5, 0],
-//             [0, 5, 5],
-//             [0, 0, 0],
-//         ];
-//     } else if (type === 'S') {
-//         return [
-//             [0, 6, 6],
-//             [6, 6, 0],
-//             [0, 0, 0],
-//         ];
-//     } else if (type === 'T') {
-//         return [
-//             [0, 7, 0],
-//             [7, 7, 7],
-//             [0, 0, 0],
-//         ];
-//     }
-// }
-
-function drawMatrix(matrix, offset) {
-  //console.log('drawMatrix');
-  matrix.forEach((row, y) => {
-
-    //console.log(row);
-
-    row.forEach((value, x) => {
-      if (value !== 0) {
-
-        context.fillStyle = colors[value];
-        //console.log(' colors[value]',value);
-
-        context.fillRect(x + offset.x, y + offset.y, 1, 1);
-      }
-    });
-  });
-}
-//
 function draw() {
   context.fillStyle = '#000';
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -223,97 +22,30 @@ function draw() {
   drawMatrix(player.matrix, player.pos);
 }
 
-// some create map
-const obstacle = [
-  [1, 2, 4, 3, 3, 3, 1, 2, 2, 4],
-  [1, 4, 4, 1, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 1, 1, 1, 1, 4, 4, 4],
-  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
-  [1, 1, 1, 1, 4, 1, 3, 1, 1, 1],
-  [2, 4, 4, 4, 4, 1, 3, 1, 1, 1],
-  [3, 0, 1, 0, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 0, 0, 3, 0, 1, 1, 1],
-  [1, 0, 0, 0, 0, 3, 0, 1, 1, 1]
-];
-// const obstacle = [
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0]
- 
-// ];
-// const obstacle = [
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 3, 0, 0, 0, 0]
- 
-// ];
-//merge arena with obstacle
-function merge2(arena, obstacle) {
-  //console.log('merge2');
-  //console.log('obstacle.matrix: ',obstacle);
-
-  obstacle.forEach((row, y) => {
-    //console.log('1', row, y);
+function drawMatrix(matrix, offset) {
+  matrix.forEach((row, y) => {
     row.forEach((value, x) => {
-      //console.log('2', value, x);
       if (value !== 0) {
-        //console.log('+',y,x);
-        // y,x this is coordonates where to put obstacle
-        //arena[y + player.pos.y][x + player.pos.x] = value;
-        arena[y][x] = value;
+        context.fillStyle = colors[value];
+        context.fillRect(x + offset.x, y + offset.y, 1, 1);
       }
     });
   });
 }
 
-// work when element is freezes
-function merge(arena, player) {
-  //console.log('merge',arena, player);
-  //console.log('player.matrix: ', player.matrix);
-  player.matrix.forEach((row, y) => {
-    // console.log('1', row, y);
+// merge arena with map
+function mergeWithMap(arena, map) {
+  map.forEach((row, y) => {
     row.forEach((value, x) => {
-      if (value !== 0) {
-        arena[y + player.pos.y][x + player.pos.x] = value;
-      }
+			arena[y][x] = value;
     });
   });
 }
 
-// function rotate(matrix, dir) {
-//     for (let y = 0; y < matrix.length; ++y) {
-//         for (let x = 0; x < y; ++x) {
-//             [
-//                 matrix[x][y],
-//                 matrix[y][x],
-//             ] = [
-//                 matrix[y][x],
-//                 matrix[x][y],
-//             ];
-//         }
-//     }
+let dropCounter = 0;
+let dropInterval = 20;
 
-//     if (dir > 0) {
-//         matrix.forEach(row => row.reverse());
-//     } else {
-//         matrix.reverse();
-//     }
-// }
+let lastTime = 0;
 
 function drop() {
   const arr = [];
@@ -328,20 +60,12 @@ function drop() {
           const obj = {x: x, y: y};
           arr.push(obj);
         }
-        
-        //get all rocks that no londer move
-        // if ((arena[y][x] === 4) && ((arena[y + 1][x] === 0))) {
-        //   const obj = {x: x, y: y};
-        //   arrHit.push(obj);
-        // }
       }
-
       //get all rocks in move
       if (arena[y][x] === 4) {
         const obj = {x: x, y: y};
         arrHit.push(obj);
       }
-      
     })
   })
 
@@ -360,10 +84,6 @@ function drop() {
               arena[y][x] = 0;
               arena[y + 1][x] = 4;
             }
-
-            // if (arena[y + 1][x] === 3) {
-            //   arena[y][x] = 4;
-            // }
           }
         })
       })
@@ -377,9 +97,6 @@ function drop() {
         arrHit.forEach((item, index) => {
           if ((item.y === y) && (item.x === x)) {
             //checking if it ground
-            
-            //console.log('arena[y][x]: ',y);
-
             // if there place to fall down
             if ((height > y + 1) && (arena[y + 1][x] === 0)) {
               // drop
@@ -393,14 +110,13 @@ function drop() {
               if (arena[y + 1][x] !== 3) {
                 //console.log('hit noRock');
                 arena[y][x] = 3;
-              }  
+               }
               // check if there no space around:
               if (
-                // check logic :)
                 ((arena[y + 1][x - 1] !== 0) && (arena[y + 1][x + 1] !== 0)) 
                 || ((arena[y][x - 1] !== 0) && (arena[y][x + 1] !== 0)) 
                 || ((arena[y][x - 1] !== 0) && (arena[y + 1][x + 1] !== 0)) 
-                || ((arena[y + 1][x - 1] !== 0) && (arena[y][x + 1] !== 0)) 
+                || ((arena[y + 1][x - 1] !== 0) && (arena[y][x + 1] !== 0))
               ) {
                 //console.log('END of fall'); 
                 arena[y][x] = 3;
@@ -408,7 +124,6 @@ function drop() {
               // if it rock or not?
               if ((arena[y + 1][x] === 3))  {
                 //console.log('hit rock');
-
                 // check space around:
                 if ((arena[y][x - 1] === 0) && (arena[y + 1][x - 1] === 0) && (arena[y][x + 1] === 0) && (arena[y + 1][x + 1] === 0)) {
                   //console.log('both'); 
@@ -428,15 +143,25 @@ function drop() {
                   //console.log('right'); 
                   arena[y][x] = 0;
                   arena[y + 1][x + 1] = 4;
-                }
-              }   
+                } else if (arena[y + 1][x] === 4) {
+                  arena[x][y] = 2;
+                 }
+              }
+
             }  
+
+            // // if rock hit player
+            if ((player.pos.y > 0) && (arena[player.pos.y - 1][player.pos.x] === 4)) {
+              console.log('DEATH');
+              player.matrix = [[6]];
+              player.isAlive = false;
+            }
+
             // if on the ground
             if (height === y + 1) {
               //console.log(y);
               arena[y][x] = 3;
             }
-
           }
         })
       })
@@ -446,79 +171,11 @@ function drop() {
   dropCounter = 0;
 }
 
-let previousPos = {
-	x: null,
-	y: null
-}
-
-function playerMove(x, y) {
-  //console.log('move: ',x, y);
-  player.pos.x += x;
-  player.pos.y += y;
-
-  // logic to prevent going outside of arena
-  if (collide(arena, player)) {
-    player.pos.x -= x;
-    player.pos.y -= y;
-	}
-	
-	if ((previousPos.x !== null)) {
-		arena[previousPos.y][previousPos.x] = 0;
-	}
-
-	arena[player.pos.y][player.pos.x] =	5;	 
-	previousPos.y = player.pos.y;
-	previousPos.x = player.pos.x;
-
-	//console.log('previousPos: ',previousPos);
-}
-// function playerMove(offset) {
-//     player.pos.x += offset;
-//     if (collide(arena, player)) {
-//         player.pos.x -= offset;
-//     }
-// }
-
-function playerReset() {
-  //console.log('playerReset');
-  const pieces = 'TJLOSZI';
-  player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
-  // start postiton of player
-  player.pos.y = 9;
-  player.pos.x = 9;
-  //player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
-  if (collide(arena, player)) {
-    arena.forEach(row => row.fill(0));
-    player.score = 0;
-    updateScore();
-  }
-}
-
-// function playerRotate(dir) {
-//     const pos = player.pos.x;
-//     let offset = 1;
-//     rotate(player.matrix, dir);
-//     while (collide(arena, player)) {
-//         player.pos.x += offset;
-//         offset = -(offset + (offset > 0 ? 1 : -1));
-//         if (offset > player.matrix[0].length) {
-//             rotate(player.matrix, -dir);
-//             player.pos.x = pos;
-//             return;
-//         }
-//     }
-// }
-
-let dropCounter = 0;
-let dropInterval = 20; //70
-
-let lastTime = 0;
-
 function update(time = 0) {
   const deltaTime = time - lastTime;
 
   dropCounter += deltaTime;
-  if (dropCounter > dropInterval) {
+  if (dropCounter > dropInterval && !editMode) {
     drop();
   }
 
@@ -528,23 +185,138 @@ function update(time = 0) {
   requestAnimationFrame(update);
 }
 
-function updateScore() {
-  document.getElementById('score').innerText = player.score;
+function playerReset() {
+  // start postiton of player
+  player.pos.y = 19;
+  player.pos.x = 34;
+  
+  checkTerrain(player.pos.y, player.pos.x);
+}
+
+// if returns true you can make your move
+function collide(arena, player, x, y) {
+  const playerDesiredPosY = player.pos.y + y;
+  const playerDesiredPosX = player.pos.x + x;
+
+  // check limits of arena
+  if ((playerDesiredPosY < 0 || playerDesiredPosY > height - 1) || (playerDesiredPosX < 0 || playerDesiredPosX > width - 1)) {
+    //console.log('limits of arena');
+		return false;
+	} else if (arena[playerDesiredPosY][playerDesiredPosX] === 3) {
+    //console.log('rock collide');
+    pullRock(y, x);
+    return false;
+  } else if (
+    arena[playerDesiredPosY][playerDesiredPosX] === 4 ||
+    arena[playerDesiredPosY][playerDesiredPosX] === 5 ||
+    arena[playerDesiredPosY][playerDesiredPosX] === 7 
+    // arena[playerDesiredPosY][playerDesiredPosX] === 4 ||
+  ) {
+    return false;
+  } else {
+    //check if rock upside do not allow move down///  maybe turn off
+    if (player.pos.y > 0 && y === 1 && arena[player.pos.y - 1][player.pos.x] === 3) {
+      //console.log('rock up!');
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
+function playerMove(x, y) {
+  //console.log('playerMove', x, y);
+
+  if (editMode) {
+    player.pos.x += x;
+    player.pos.y += y;
+  } else if (collide(arena, player, x, y) && player.isAlive) {
+		player.pos.x += x;
+    player.pos.y += y;
+    
+    checkTerrain(player.pos.y, player.pos.x, y, x);
+
+    
+  } 
+  
+}
+
+function checkTerrain(posY, posX, y, x){
+  //console.log('checkTerrain', y, x);
+
+  if (y === undefined || x === undefined) {
+    y = 0;
+    x = 0;
+  }
+
+  if (arena[posY][posX] === 1) {
+    //console.log('dig ground');
+    arena[posY][posX] = 5;
+    arena[posY - y][posX - x] = 0;
+  } else if (arena[posY][posX] === 2) {
+    //console.log('eat apple');
+    arena[posY][posX] = 5;
+    arena[posY - y][posX - x] = 0;
+    player.score = player.score + 1;
+    updateScore();	
+  } else {
+    arena[posY][posX] = 5;
+    arena[posY - y][posX - x] = 0;
+  }
+}
+
+function pullRock(y, x) {
+  // if horizontal move
+  if (x !== 0) {
+    if (x === 1) {
+      if (arena[player.pos.y][player.pos.x + 2] === 0) {
+        //console.log('pull rigth');
+        arena[player.pos.y][player.pos.x + 2] = 3;
+        arena[player.pos.y][player.pos.x + 1] = 5;
+        arena[player.pos.y][player.pos.x] = 0;
+        player.pos.x += 1;
+      }  
+    } else {
+      if (arena[player.pos.y][player.pos.x - 2] === 0) {
+        //console.log('pull left');
+        arena[player.pos.y][player.pos.x - 2] = 3;
+        arena[player.pos.y][player.pos.x - 1] = 5;
+        arena[player.pos.y][player.pos.x] = 0;
+        player.pos.x -= 1;
+      } 
+    }
+  }
 }
 
 function changeColor() {
-  //console.log(player.matrix[0][0]);
+  console.log('changeColor');
 
   const matrix = player.matrix;
   player.matrix[0][0] = player.matrix[0][0] + 1;
 
   //reset
-  if (player.matrix[0][0] === 7) {
+  if (player.matrix[0][0] >= 8) {
     player.matrix[0][0] = 1;
   }
 
 }
 
+function merge(arena, player) {
+  //console.log('merge',arena, player);
+  //console.log('player.matrix: ', player.matrix);
+  player.matrix.forEach((row, y) => {
+    // console.log('1', row, y);
+    row.forEach((value, x) => {
+      //console.log('value',value);
+      arena[player.pos.y][player.pos.x] = value;  
+      // if (value !== 0) {
+      //   arena[y + player.pos.y][x + player.pos.x] = value;
+      // }
+    });
+  });
+}
+
+//basic key events
 document.addEventListener('keydown', event => {
   if (event.keyCode === 37) {
     //left
@@ -573,34 +345,77 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const colors = [
-  null,
-  '#380000',
-  '#FF0D72',
-  '#565656',
-  '#3877FF',
-  '#FF8E0D',
-  '#FFE138',
-  '#3877FF',
-];
+function updateScore() {
+  document.getElementById('score').innerText = player.score;
+}
 
-
-const height = 10;
-const width = 10;
-
-const arena = createMatrix(height, width);
+const editMode = false;
 
 const player = {
   pos: {
     x: 0,
     y: 0
   },
-  matrix: null,
+  isAlive: true,
+  matrix: [[5]],
   score: 0,
 };
 
-merge2(arena, obstacle);
 
+
+// params
+// const map = [
+//   [1, 2, 3, 3, 3, 3, 3, 2, 2, 3],
+//   [1, 3, 3, 1, 1, 1, 3, 1, 1, 1],
+//   [1, 1, 1, 1, 1, 1, 3, 3, 3, 3],
+//   [1, 1, 1, 1, 3, 1, 3, 1, 1, 1],
+//   [1, 1, 1, 1, 3, 1, 3, 1, 1, 1],
+//   [2, 3, 3, 3, 3, 1, 3, 1, 1, 1],
+//   [3, 0, 1, 0, 1, 1, 3, 1, 1, 1],
+//   [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+//   [1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+//   [1, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+// ];
+
+const map = [
+  [3, 3, 2, 7, 1, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 2, 3, 2, 1, 1, 1, 1, 2, 3, 1, 2, 2, 3, 3, 1, 2, 2],
+  [3, 3, 7, 7, 1, 1, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 3, 3, 1, 2, 2, 2, 2, 2, 2, 2],
+  [3, 3, 7, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 3, 3, 1, 2, 2, 3, 1, 3, 2, 2],
+  [3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 2, 1, 2, 1, 3, 2, 2],
+  [3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 7, 7, 7, 7],
+  [3, 3, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 7, 7, 3, 3, 2, 3, 3, 3],
+  [2, 3, 7, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 3, 3, 3, 3, 3, 2, 3, 3],
+  [2, 2, 3, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 2, 3],
+  [2, 2, 7, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 2],
+  [2, 2, 7, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1],
+  [2, 2, 7, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 7, 7, 7, 7, 7, 7, 7, 3, 7, 7, 7, 7, 7, 7, 7, 7],
+  [2, 2, 7, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3],
+  [2, 2, 7, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 2, 3, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 7, 3],
+  [2, 2, 7, 7, 7, 7, 7, 7, 7, 7, 7, 1, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 2, 3, 2],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
+
+const colors = [
+  null, // 0
+  '#380000', // 1
+  '#FF0D72',
+  '#565656',
+  '#3877FF',
+  '#FF8E0D',
+  '#b20000',
+  '#008000', // 7
+];
+
+const height = 20;
+const width = 35;
+
+const arena = createMatrix(width, height);
+mergeWithMap(arena, map);
 playerReset();
 updateScore();
 update();
