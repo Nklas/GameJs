@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 
-context.scale(20, 20);
+context.scale(40, 40);
 
 function createMatrix(w, h) {
   const matrix = [];
@@ -266,6 +266,32 @@ function pullRock(y, x) {
   }
 }
 
+function changeColor() {
+  //console.log(player.matrix[0][0]);
+
+  const matrix = player.matrix;
+  player.matrix[0][0] = player.matrix[0][0] + 1;
+
+  //reset
+  if (player.matrix[0][0] === 7) {
+    player.matrix[0][0] = 1;
+  }
+
+}
+
+function merge(arena, player) {
+  //console.log('merge',arena, player);
+  //console.log('player.matrix: ', player.matrix);
+  player.matrix.forEach((row, y) => {
+    // console.log('1', row, y);
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        arena[y + player.pos.y][x + player.pos.x] = value;
+      }
+    });
+  });
+}
+
 //basic key events
 document.addEventListener('keydown', event => {
   if (event.keyCode === 37) {
@@ -280,6 +306,18 @@ document.addEventListener('keydown', event => {
   } else if (event.keyCode === 38) {
     // up
     playerMove(0, -1);
+  } else if (event.keyCode === 32) {
+    //create fingerprint*	
+    console.log('f');
+    merge(arena, player);
+    //arenaSweep();
+  } else if (event.keyCode === 67) {
+    //change color:
+    //console.log('change color');
+    changeColor();
+  } else if (event.keyCode === 73) {
+    //show arena	
+    console.log(arena);
   }
 });
 
@@ -324,8 +362,8 @@ const colors = [
   '#3877FF',
 ];
 
-const height = 10;
-const width = 10;
+const height = 20;
+const width = 35;
 
 const arena = createMatrix(height, width);
 mergeWithMap(arena, map);
