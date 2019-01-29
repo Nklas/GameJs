@@ -175,7 +175,7 @@ function update(time = 0) {
   const deltaTime = time - lastTime;
 
   dropCounter += deltaTime;
-  if (dropCounter > dropInterval) {
+  if (dropCounter > dropInterval && !editMode) {
     drop();
   }
 
@@ -187,8 +187,8 @@ function update(time = 0) {
 
 function playerReset() {
   // start postiton of player
-  player.pos.y = 9;
-  player.pos.x = 9;
+  player.pos.y = 19;
+  player.pos.x = 34;
   
   checkTerrain(player.pos.y, player.pos.x);
 }
@@ -206,6 +206,13 @@ function collide(arena, player, x, y) {
     //console.log('rock collide');
     pullRock(y, x);
     return false;
+  } else if (
+    arena[playerDesiredPosY][playerDesiredPosX] === 4 ||
+    arena[playerDesiredPosY][playerDesiredPosX] === 5 ||
+    arena[playerDesiredPosY][playerDesiredPosX] === 7 
+    // arena[playerDesiredPosY][playerDesiredPosX] === 4 ||
+  ) {
+    return false;
   } else {
     //check if rock upside do not allow move down///  maybe turn off
     if (player.pos.y > 0 && y === 1 && arena[player.pos.y - 1][player.pos.x] === 3) {
@@ -219,27 +226,42 @@ function collide(arena, player, x, y) {
 
 function playerMove(x, y) {
   //console.log('playerMove', x, y);
-  if (collide(arena, player, x, y) && player.isAlive) {
+
+  if (editMode) {
+    player.pos.x += x;
+    player.pos.y += y;
+  } else if (collide(arena, player, x, y) && player.isAlive) {
 		player.pos.x += x;
     player.pos.y += y;
     
-    checkTerrain(player.pos.y, player.pos.x);
-    arena[player.pos.y][player.pos.x] =	5;	
-    arena[player.pos.y - y][player.pos.x - x] =	0;	
+    checkTerrain(player.pos.y, player.pos.x, y, x);
+
+    
   } 
   
 }
 
-function checkTerrain(y, x){
-  //console.log('rock up!000',  player.pos.y);
-  if (arena[y][x] === 1) {
+function checkTerrain(posY, posX, y, x){
+  //console.log('checkTerrain', y, x);
+
+  if (y === undefined || x === undefined) {
+    y = 0;
+    x = 0;
+  }
+
+  if (arena[posY][posX] === 1) {
     //console.log('dig ground');
-    arena[y][x] = 0;
-  } else if (arena[y][x] === 2) {
+    arena[posY][posX] = 5;
+    arena[posY - y][posX - x] = 0;
+  } else if (arena[posY][posX] === 2) {
     //console.log('eat apple');
-    arena[y][x] = 0;
+    arena[posY][posX] = 5;
+    arena[posY - y][posX - x] = 0;
     player.score = player.score + 1;
-    updateScore();
+    updateScore();	
+  } else {
+    arena[posY][posX] = 5;
+    arena[posY - y][posX - x] = 0;
   }
 }
 
@@ -267,13 +289,13 @@ function pullRock(y, x) {
 }
 
 function changeColor() {
-  //console.log(player.matrix[0][0]);
+  console.log('changeColor');
 
   const matrix = player.matrix;
   player.matrix[0][0] = player.matrix[0][0] + 1;
 
   //reset
-  if (player.matrix[0][0] === 7) {
+  if (player.matrix[0][0] >= 8) {
     player.matrix[0][0] = 1;
   }
 
@@ -285,9 +307,11 @@ function merge(arena, player) {
   player.matrix.forEach((row, y) => {
     // console.log('1', row, y);
     row.forEach((value, x) => {
-      if (value !== 0) {
-        arena[y + player.pos.y][x + player.pos.x] = value;
-      }
+      //console.log('value',value);
+      arena[player.pos.y][player.pos.x] = value;  
+      // if (value !== 0) {
+      //   arena[y + player.pos.y][x + player.pos.x] = value;
+      // }
     });
   });
 }
@@ -325,6 +349,8 @@ function updateScore() {
   document.getElementById('score').innerText = player.score;
 }
 
+const editMode = false;
+
 const player = {
   pos: {
     x: 0,
@@ -338,34 +364,57 @@ const player = {
 
 
 // params
+// const map = [
+//   [1, 2, 3, 3, 3, 3, 3, 2, 2, 3],
+//   [1, 3, 3, 1, 1, 1, 3, 1, 1, 1],
+//   [1, 1, 1, 1, 1, 1, 3, 3, 3, 3],
+//   [1, 1, 1, 1, 3, 1, 3, 1, 1, 1],
+//   [1, 1, 1, 1, 3, 1, 3, 1, 1, 1],
+//   [2, 3, 3, 3, 3, 1, 3, 1, 1, 1],
+//   [3, 0, 1, 0, 1, 1, 3, 1, 1, 1],
+//   [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+//   [1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+//   [1, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+// ];
+
 const map = [
-  [1, 2, 3, 3, 3, 3, 3, 2, 2, 3],
-  [1, 3, 3, 1, 1, 1, 3, 1, 1, 1],
-  [1, 1, 1, 1, 1, 1, 3, 3, 3, 3],
-  [1, 1, 1, 1, 3, 1, 3, 1, 1, 1],
-  [1, 1, 1, 1, 3, 1, 3, 1, 1, 1],
-  [2, 3, 3, 3, 3, 1, 3, 1, 1, 1],
-  [3, 0, 1, 0, 1, 1, 3, 1, 1, 1],
-  [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+  [3, 3, 2, 7, 1, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 2, 3, 2, 1, 1, 1, 1, 2, 3, 1, 2, 2, 3, 3, 1, 2, 2],
+  [3, 3, 7, 7, 1, 1, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 3, 3, 1, 2, 2, 2, 2, 2, 2, 2],
+  [3, 3, 7, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 3, 3, 1, 2, 2, 3, 1, 3, 2, 2],
+  [3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 2, 1, 2, 1, 3, 2, 2],
+  [3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 7, 7, 7, 7],
+  [3, 3, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 7, 7, 3, 3, 2, 3, 3, 3],
+  [2, 3, 7, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 3, 3, 3, 3, 3, 2, 3, 3],
+  [2, 2, 3, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 2, 3],
+  [2, 2, 7, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 2],
+  [2, 2, 7, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1],
+  [2, 2, 7, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 7, 7, 7, 7, 7, 7, 7, 3, 7, 7, 7, 7, 7, 7, 7, 7],
+  [2, 2, 7, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3],
+  [2, 2, 7, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 2, 3, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 2, 7, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 7, 3],
+  [2, 2, 7, 7, 7, 7, 7, 7, 7, 7, 7, 1, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 2, 3, 2],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
 const colors = [
-  null,
-  '#380000',
+  null, // 0
+  '#380000', // 1
   '#FF0D72',
   '#565656',
   '#3877FF',
   '#FF8E0D',
   '#b20000',
-  '#3877FF',
+  '#008000', // 7
 ];
 
 const height = 20;
 const width = 35;
 
-const arena = createMatrix(height, width);
+const arena = createMatrix(width, height);
 mergeWithMap(arena, map);
 playerReset();
 updateScore();
